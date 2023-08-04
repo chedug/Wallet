@@ -1,14 +1,9 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
-from rest_framework.parsers import JSONParser
-from wallets.models import Wallet
-from wallets.serializers import WalletSerializer, UserSerializer
+from .models import Wallet
+from .serializers import WalletSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework import permissions
-from wallets.permissions import IsOwnerOrReadOnly
-
+from .permissions import IsOwnerOrReadOnly
 
 
 class WalletList(generics.ListCreateAPIView):
@@ -22,6 +17,7 @@ class WalletList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 
 class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Wallet.objects.all()

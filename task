@@ -1,0 +1,100 @@
+You should implement the ability to create new wallets and provide transactions between them. Transactions are available only for wallets with the same currency (from GBP to GBP - ok, from GBP to USD - wrong, show an exception for the user. When a user sends money from their wallet to another of their wallets - no commission is applied, and when they send money to a wallet related to another user - a commission of 10% is applied.
+
+
+Wallet entity:
+- id
+- name - unique random 8 symbols of the Latin alphabet and digits. Example: MO72RTX3
+- type - 2 possible choices: Visa or Mastercard
+- currency - 3 possible choices: USD, EUR, GBP
+- balance - balance rounded up to 2 decimal places. Example: 1.38 - ok, 1.377 - wrong
+- user - user_id, who created the wallet
+- created_on - datetime when the wallet was created
+- modified_on - datetime when the wallet was modified
+
+Users can't create more than 5 wallets.
+
+How to create wallets: 
+POST /wallets
+{
+ "type": "visa",
+ "currency": "GBP"
+}
+When a user creates a new wallet, they get a default bonus from the bank: if the wallet currency is USD or EUR - balance=3.00, if GBP - balance=100.00
+
+
+Get all user's wallets:
+GET /wallets
+Example:
+{
+[
+"id": "1",
+"name": "ER15096L",
+"type": "Visa",
+"currency": "USD",
+"balance": "1.87",
+"created_on": ...,
+"modified_on": ...
+],
+[
+"id": "2",
+"name": "VB07N96L",
+"type": "Visa",
+"currency": "GBP",
+"balance": "1000.50",
+"created_on": ...,
+"modified_on": ...
+]
+}
+
+GET /wallets/<name> - get wallet where name=<name>. Example - /wallets/VB07N96L
+DELETE /wallets/<name> - delete wallet
+
+You can't modify wallet data; PUT and PATCH are not available.
+
+Transactions entity:
+- sender - wallet id
+- receiver - wallet id
+- transfer_amount - the amount of money that the "sender" sends to the "receiver". Example - 5.00
+- commission - 0.00 if no commission; otherwise, transfer_amount * 0.10
+- status - PAID if no problems; otherwise, FAILED
+- timestamp - datetime when the transaction was created
+
+POST /wallets/transactions/ - create new transaction. Example:
+{
+"sender": "VB07N96L"
+"receiver": "MJYR096L",
+"transfer_amount": "100.00"
+}
+
+GET /wallets/transactions/ - get all transactions for current user. Example:
+{
+[
+"id": 1,
+"sender": "VB07N96L",
+"receiver": "MJYR096L",
+"transfer_amount": "100.00",
+"commision": "0.00",
+"status": "PAID",
+"timestamp": ...
+],
+...
+}
+
+GET /wallets/transactions/<transaction_id> - get transaction
+GET /wallets/transactions/<wallet_name> - get all transactions where wallet was sender or receiver
+
+Stack: Python, Django, DRF, Django ORM, PostgreSQL
+
+Requirements:
+1) User register, login, logout
+2) Logic, described above
+3) Every feature in a new branch. Merge the new branch to master after approval
+4) Try to follow architecture principles (SOLID, DRY...)
+5) Use pre-commit hooks. Example: https://towardsdatascience.com/4-pre-commit-plugins-to-automate-code-reviewing-and-formatting-in-python-c80c6d2e9f5
+6) Use annotations
+7) Write unit tests
+8) Prepare a ReadMe file. The file describes what needs to be done to start the project.
+
+
+
+

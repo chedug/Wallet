@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from wallets.models import Wallet
+from .models import Wallet
 from django.contrib.auth.models import User
+from decimal import Decimal
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -10,9 +11,39 @@ class WalletSerializer(serializers.ModelSerializer):
         model = Wallet
         fields = ['id', 'name', 'type', 'currency', 'balance', 'user', 'created_on', 'modified_on', ]
 
+    def create(self, validated_data):
+        self.validate_max_wallets(validated_data)
+        self.validate_bonus(validated_data)
+        return Wallet.objects.create(**validated_data)
+
+    def validate_max_wallets(self, validated_data):
+        """
+        User cannot have more than 5 wallets
+        """
+        user = validated_data['user']
+        if Wallet.objects.filter(user=user).count() >= 5:
+            raise serializers.ValidationError("Users can't create more than 5 wallets.")
+
+    def validate_bonus(self, validated_data):
+        """
+        Adding bonus based on currency
+        """
+        currency = validated_data.get('currency')
+        bonus = 0.00
+
+        if currency == 'GBP':
+            bonus = Decimal(100.00)
+        elif currency in ('USD', 'EUR'):
+            bonus = Decimal(3.00)
+
+        balance = validated_data.get('balance')
+        if balance is None:
+            balance = 0.00
+        validated_data['balance'] = balance + bonus
+
 
 class UserSerializer(serializers.ModelSerializer):
-    wallets = serializers.RelatedField(many=True, read_only=True )
+    wallets = serializers.RelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
