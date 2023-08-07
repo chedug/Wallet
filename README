@@ -1,0 +1,17 @@
+	Plan
++ Write TransactionSerializer
++ TransactionList view (/wallets/transactions/) Return all transactions for current user
++ TransactionDetail view (/wallets/transaction/<transaction_id>) Get transaction detail
++ TransactionListWalletName (/wallets/transaction/<wallet_name>) Get all transaction where wallet was sender or receiver
+
+
+
+Requirements:
+1) User register, login, logout
+2) Logic, described above
+3) Every feature in a new branch. Merge the new branch to master after approval
+4) Try to follow architecture principles (SOLID, DRY...)
+5) Use pre-commit hooks. Example: https://towardsdatascience.com/4-pre-commit-plugins-to-automate-code-reviewing-and-formatting-in-python-c80c6d2e9f5
+6) Use annotations
+7) Write unit tests
+8) Prepare a ReadMe file. The file describes what needs to be done to start the project.
