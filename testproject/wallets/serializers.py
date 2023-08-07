@@ -73,7 +73,33 @@ class TransactionSerializer(serializers.ModelSerializer):
     Serializer for Transaction Model
     """
 
-    user = serializers.ReadOnlyField(source="user.username")
+    # user = serializers.ReadOnlyField(source="user.username")
+
+    def create(self, validated_data):
+        """
+        Create transaction
+        """
+        self.validate_sender_and_receiver()
+        self.validate_transfer_amount()
+
+    def validate_sender_and_receiver(self, validated_data):
+        """
+        Validate that sender or receiver exists
+        """
+        sender_id = validated_data.get("sender")
+        receiver_id = validated_data.get("receiver")
+        try:
+            Wallet.objects.get(id=sender_id)
+            Wallet.object.get(id=receiver_id)
+        except Wallet.DoesNotExist:
+            raise serializers.ValidationError("Provided sender/receiver does not exist")
+
+    def validate_transfer_amount(self):
+        """
+        Validate that transfer amount is not negative number
+        and also handle comission logic
+        """
+        pass
 
     class Meta:
         """

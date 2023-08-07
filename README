@@ -15,3 +15,6 @@ Requirements:
 6) Use annotations
 7) Write unit tests
 8) Prepare a ReadMe file. The file describes what needs to be done to start the project.
+
+	Hints:
+use @transaction.atomic decorator for writing transaction logic

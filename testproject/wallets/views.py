@@ -17,7 +17,15 @@ class WalletList(generics.ListCreateAPIView):
     List Existing Wallets or add new
     """
 
-    queryset = Wallet.objects.all()
+    def get_queryset(self):
+        """
+        This view should return a list of all
+        wallets, where the user is current authenticated
+        user.
+        """
+        user = self.request.user
+        return Wallet.objects.all().filter(user=user.id)
+
     serializer_class = WalletSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
@@ -49,13 +57,19 @@ class TransactionList(generics.ListCreateAPIView):
     List existing transaction or add new one (curr. user)
     """
 
-    serializer = TransactionSerializer
+    serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_queryset(self):
+        """
+        Show only transactions where either receiver or sender
+        wallet is of user's
+        """
         queryset = Transaction.objects.filter(
-            Q(sender__user=self.request.user) | Q(receiver__user=self.request.user)
+            Q(sender__user=self.request.user.id)
+            | Q(receiver__user=self.request.user.id)
         )
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
