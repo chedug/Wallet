@@ -3,13 +3,11 @@ Views for Wallet app
 """
 
 from django.contrib.auth.models import User
-from django.db.models import Q
 from rest_framework import generics, permissions
 
-from .models import Transaction, Wallet
+from .models import Wallet
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (TransactionSerializer, UserSerializer,
-                          WalletSerializer)
+from .serializers import UserSerializer, WalletSerializer
 
 
 class WalletList(generics.ListCreateAPIView):
@@ -27,9 +25,15 @@ class WalletList(generics.ListCreateAPIView):
         return Wallet.objects.all().filter(user=user.id)
 
     serializer_class = WalletSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+    ]
 
     def perform_create(self, serializer):
+        """
+        Set user field as current user
+        """
         serializer.save(user=self.request.user)
 
 
@@ -40,7 +44,10 @@ class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+    ]
 
     def get_object(self):
         """
@@ -50,29 +57,6 @@ class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
         wallet = generics.get_object_or_404(Wallet, name=name)
         self.check_object_permissions(self.request, wallet)
         return wallet
-
-
-class TransactionList(generics.ListCreateAPIView):
-    """
-    List existing transaction or add new one (curr. user)
-    """
-
-    serializer_class = TransactionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-
-    def get_queryset(self):
-        """
-        Show only transactions where either receiver or sender
-        wallet is of user's
-        """
-        queryset = Transaction.objects.filter(
-            Q(sender__user=self.request.user.id)
-            | Q(receiver__user=self.request.user.id)
-        )
-        return queryset
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class UserList(generics.ListAPIView):

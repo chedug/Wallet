@@ -1,8 +1,6 @@
 """
 Wallet app Models
 """
-
-
 from decimal import Decimal
 
 from django.core.validators import MinValueValidator
@@ -19,10 +17,6 @@ CURRENCY_CHOICES = [
     ("GBP", "GBP"),
 ]
 allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-STATUS_CHOICES = [
-    ("PAID", "Paid"),
-    ("FAILED", "Failed"),
-]
 
 
 def create_random_name():
@@ -38,7 +32,9 @@ class Wallet(models.Model):
     User Wallets
     """
 
-    id = models.AutoField(primary_key=True)
+    objects = models.Manager()
+    max_number_of_wallets = 5
+
     name = models.CharField(
         max_length=8,
         blank=False,
@@ -46,16 +42,20 @@ class Wallet(models.Model):
         editable=False,
         default=create_random_name,
     )
-    type = models.CharField(choices=TYPE_CHOICES, max_length=10)
-    currency = models.CharField(choices=CURRENCY_CHOICES, max_length=3)
+    type = models.CharField(
+        choices=TYPE_CHOICES, default="visa", max_length=10
+    )
+    currency = models.CharField(
+        choices=CURRENCY_CHOICES, default="USD", max_length=3
+    )
     balance = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         default=0.00,
         validators=[MinValueValidator(Decimal("0"))],
     )
-    created_on = models.DateTimeField(auto_now_add=True)
-    modified_on = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True, null=False)
+    modified_on = models.DateTimeField(auto_now=True, null=False)
     user = models.ForeignKey(
         "auth.User", related_name="wallets", on_delete=models.CASCADE
     )
@@ -67,34 +67,11 @@ class Wallet(models.Model):
 
         ordering = ["created_on"]
 
-
-class Transaction(models.Model):
-    """
-    Transaction between wallets
-    """
-
-    sender = models.ForeignKey(
-        "Wallet", on_delete=models.CASCADE, related_name="sent_transactions"
-    )
-    receiver = models.ForeignKey(
-        "Wallet", on_delete=models.CASCADE, related_name="received_transactions"
-    )
-    transfer_amount = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
-    )
-    commission = models.DecimalField(
-        max_digits=20,
-        decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
-    )
-    status = models.CharField(choices=STATUS_CHOICES, max_length=6)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        """
-        Order by datetime
-        """
-
-        ordering = ["timestamp"]
+    def create_random_name(self):
+        """Random 8 character long name"""
+        random_name = get_random_string(length=8, allowed_chars=allowed_chars)
+        while Wallet.objects.filter(name=random_name).exists():
+            random_name = get_random_string(
+                length=8, allowed_chars=allowed_chars
+            )
+        return random_name

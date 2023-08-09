@@ -7,7 +7,7 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Transaction, Wallet
+from .models import Wallet
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -15,7 +15,9 @@ class WalletSerializer(serializers.ModelSerializer):
     Serializer for Wallet Model
     """
 
-    user = serializers.ReadOnlyField(source="user.username")
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, source="user.username"
+    )
 
     class Meta:
         """
@@ -48,7 +50,9 @@ class WalletSerializer(serializers.ModelSerializer):
         """
         user = validated_data["user"]
         if Wallet.objects.filter(user=user).count() >= 5:
-            raise serializers.ValidationError("Users can't create more than 5 wallets.")
+            raise serializers.ValidationError(
+                "Users can't create more than 5 wallets."
+            )
 
     def validate_bonus(self, validated_data):
         """
@@ -64,57 +68,8 @@ class WalletSerializer(serializers.ModelSerializer):
 
         balance = validated_data.get("balance")
         if balance is None:
-            balance = 0.00
+            balance = Decimal("0")
         validated_data["balance"] = balance + bonus
-
-
-class TransactionSerializer(serializers.ModelSerializer):
-    """
-    Serializer for Transaction Model
-    """
-
-    # user = serializers.ReadOnlyField(source="user.username")
-
-    def create(self, validated_data):
-        """
-        Create transaction
-        """
-        self.validate_sender_and_receiver()
-        self.validate_transfer_amount()
-
-    def validate_sender_and_receiver(self, validated_data):
-        """
-        Validate that sender or receiver exists
-        """
-        sender_id = validated_data.get("sender")
-        receiver_id = validated_data.get("receiver")
-        try:
-            Wallet.objects.get(id=sender_id)
-            Wallet.object.get(id=receiver_id)
-        except Wallet.DoesNotExist:
-            raise serializers.ValidationError("Provided sender/receiver does not exist")
-
-    def validate_transfer_amount(self):
-        """
-        Validate that transfer amount is not negative number
-        and also handle comission logic
-        """
-        pass
-
-    class Meta:
-        """
-        Related Model and its fields
-        """
-
-        model = Transaction
-        fields = [
-            "sender",
-            "receiver",
-            "transfer_amount",
-            "commission",
-            "status",
-            "timestamp",
-        ]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -122,7 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
     Serializer for default auth.User model
     """
 
-    wallets = serializers.RelatedField(many=True, read_only=True)
+    wallets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
