@@ -4,10 +4,11 @@ Transaction Views
 
 
 from django.db.models import Q
-from rest_framework import generics, permissions
-from transactions.logic import transaction
+from rest_framework import generics, permissions, serializers
+from transactions.logic import wallet_transaction
 
 from .models import Transaction
+from .permissions import IsOwnerOrReadOnly
 from .serializers import TransactionSerializer
 
 
@@ -41,5 +42,42 @@ class TransactionList(generics.ListCreateAPIView):
         except KeyError:
             """in case transfer amount is not specified"""
             transfer_amount = Transaction.default_transfer_amount
-        transaction(sender, receiver, transfer_amount)
-        serializer.save()
+        try:
+            wallet_transaction(sender, receiver, transfer_amount)
+            serializer.save(status="PAID")
+        except serializers.ValidationError:
+            serializer.save(status="FAILED")
+
+
+class TransactionDetail(generics.RetrieveDestroyAPIView):
+    """
+    Detail of individual Transaction
+    """
+
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_object(self):
+        """
+        Get Transaction or 404 if it doesn't exist
+        """
+        id = self.kwargs["id"]
+        transaction = generics.get_object_or_404(Transaction, id=id)
+        self.check_object_permissions(self.request, transaction)
+        return transaction
+
+
+class TransactionWalletList(generics.ListAPIView):
+    """
+    All transactions where wallet was sender or receiver
+    """
+
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        wallet_name = self.kwargs["name"]
+        queryset = Transaction.objects.filter(
+            Q(sender__name=wallet_name) | Q(receiver__name=wallet_name)
+        )
+        return queryset

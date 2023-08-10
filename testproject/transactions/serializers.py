@@ -25,6 +25,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
         model = Transaction
         fields = [
+            "id",
             "sender",
             "receiver",
             "transfer_amount",
@@ -56,6 +57,9 @@ class TransactionSerializer(serializers.ModelSerializer):
                 "Provided sender/receiver does not exist"
             )
 
+    def validate_sender_wallet(self, validated_data):
+        pass
+
     def validate_currency(self, validated_data):
         """
         Checks if currencies are the same
@@ -82,7 +86,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
         if sender_wallet.balance - transfer_amount < Decimal("0"):
             raise serializers.ValidationError(
-                f"User does not have enough money on wallet {sender}"
+                f"User does not have enough money on wallet {sender.name}"
             )
 
 
