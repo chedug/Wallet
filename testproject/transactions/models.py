@@ -1,4 +1,6 @@
-# Create your models here.
+"""
+Transaction Models
+"""
 from decimal import Decimal
 
 from django.core.validators import MinValueValidator
@@ -43,7 +45,7 @@ class Transaction(models.Model):
         validators=[MinValueValidator(Decimal("0"))],
     )
     status = models.CharField(
-        choices=STATUS_CHOICES, max_length=6, default="FAILED"
+        choices=STATUS_CHOICES, max_length=6, default="FAILED", editable=False
     )
     timestamp = models.DateTimeField(
         auto_now_add=True, editable=False, null=False
