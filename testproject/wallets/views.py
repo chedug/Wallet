@@ -4,6 +4,7 @@ Views for Wallet app
 
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
+from rest_framework_swagger.views import get_swagger_view
 
 from .models import Wallet
 from .permissions import IsOwnerOrReadOnly
@@ -75,3 +76,6 @@ class UserDetail(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+schema_view = get_swagger_view(title="Wallet-Transactions API")

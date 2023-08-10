@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from transactions.logic import transaction
 from wallets.models import Wallet
 
 from .models import Transaction
@@ -39,7 +40,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         """
         self.validate_sender_and_receiver(validated_data)
         self.validate_currency(validated_data)
-        self.validate_transfer_amount(validated_data)
+        self.validate_sender_money(validated_data)
         return Transaction.objects.create(**validated_data)
 
     def validate_sender_and_receiver(self, validated_data):
@@ -69,9 +70,9 @@ class TransactionSerializer(serializers.ModelSerializer):
                 "Wallets' currencies do not match."
             )
 
-    def validate_transfer_amount(self, validated_data):
+    def validate_sender_money(self, validated_data):
         """
-        Checks sender has enough money
+        Validate that sender has enough money
         """
         sender = validated_data["sender"]
         receiver = validated_data["receiver"]
@@ -84,10 +85,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                 f"User does not have enough money on wallet {sender}"
             )
 
-        sender_wallet.balance -= transfer_amount
-        receiver_wallet.balance += transfer_amount
-        receiver_wallet.save()
-        sender_wallet.save()
+        transaction(sender_wallet, receiver_wallet, transfer_amount)
 
 
 class UserSerializer(serializers.ModelSerializer):
