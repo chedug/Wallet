@@ -18,6 +18,8 @@ class Transaction(models.Model):
     Transaction between wallets
     """
 
+    default_transfer_amount = Decimal("0")
+
     objects = models.Manager()
     sender = models.ForeignKey(
         Wallet,
@@ -34,14 +36,14 @@ class Transaction(models.Model):
     transfer_amount = models.DecimalField(
         max_digits=20,
         decimal_places=2,
-        default=0.00,
+        default=default_transfer_amount,
         validators=[MinValueValidator(Decimal("0"))],
     )
     commission = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         editable=False,
-        default=0.00,
+        default=0,
         validators=[MinValueValidator(Decimal("0"))],
     )
     status = models.CharField(

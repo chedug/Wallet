@@ -36,6 +36,10 @@ class TransactionList(generics.ListCreateAPIView):
         """
         sender = serializer.validated_data["sender"]
         receiver = serializer.validated_data["receiver"]
-        transfer_amount = serializer.validated_data["transfer_amount"]
+        try:
+            transfer_amount = serializer.validated_data["transfer_amount"]
+        except KeyError:
+            """in case transfer amount is not specified"""
+            transfer_amount = Transaction.default_transfer_amount
         transaction(sender, receiver, transfer_amount)
         serializer.save()

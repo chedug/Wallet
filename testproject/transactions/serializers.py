@@ -74,7 +74,10 @@ class TransactionSerializer(serializers.ModelSerializer):
         Validate that sender has enough money
         """
         sender = validated_data["sender"]
-        transfer_amount = validated_data["transfer_amount"]
+        try:
+            transfer_amount = validated_data["transfer_amount"]
+        except KeyError:
+            transfer_amount = Transaction.default_transfer_amount
         sender_wallet = Wallet.objects.get(name=sender.name)
 
         if sender_wallet.balance - transfer_amount < Decimal("0"):
