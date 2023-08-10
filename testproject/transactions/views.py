@@ -37,11 +37,9 @@ class TransactionList(generics.ListCreateAPIView):
         """
         Transfer money between two wallets
         """
-        try:
-            transfer_amount = serializer.validated_data["transfer_amount"]
-        except KeyError:
-            """in case transfer amount is not specified"""
-            transfer_amount = Transaction.default_transfer_amount
+        transfer_amount = serializer.validated_data.get(
+            "transfer_amount", Transaction.default_transfer_amount
+        )
         sender = serializer.validated_data["sender"]
         receiver = serializer.validated_data["receiver"]
         commission = commission_calculation(sender, receiver, transfer_amount)

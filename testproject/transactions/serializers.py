@@ -40,7 +40,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         """
         self.validate_sender_and_receiver(validated_data)
         self.validate_currency(validated_data)
-        self.validate_sender_money(validated_data)
         return Transaction.objects.create(**validated_data)
 
     def validate_sender_and_receiver(self, validated_data):
@@ -71,22 +70,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         if sender_wallet.currency != receiver_wallet.currency:
             raise serializers.ValidationError(
                 "Wallets' currencies do not match."
-            )
-
-    def validate_sender_money(self, validated_data):
-        """
-        Validate that sender has enough money
-        """
-        sender = validated_data["sender"]
-        try:
-            transfer_amount = validated_data["transfer_amount"]
-        except KeyError:
-            transfer_amount = Transaction.default_transfer_amount
-        sender_wallet = Wallet.objects.get(name=sender.name)
-
-        if sender_wallet.balance - transfer_amount < Decimal("0"):
-            raise serializers.ValidationError(
-                f"User does not have enough money on wallet {sender.name}"
             )
 
 
