@@ -23,4 +23,3 @@ urlpatterns = [
     path("wallets/transactions/", include("transactions.urls")),
     path("login/", include("rest_framework.urls")),
 ]
-

@@ -51,12 +51,15 @@ class WalletSerializer(serializers.ModelSerializer):
 
     def validate_max_wallets(self, validated_data):
         """
-        User cannot have more than 5 wallets.
+        User cannot have too many wallets.
         """
         user = validated_data["user"]
-        if Wallet.objects.filter(user=user).count() >= 5:
+        if (
+            Wallet.objects.filter(user=user).count()
+            >= Wallet.MAX_NUMBER_OF_WALLETS
+        ):
             raise serializers.ValidationError(
-                "Users can't create more than 5 wallets."
+                f"Users can't create more than {Wallet.MAX_NUMBER_OF_WALLETS} wallets."
             )
 
     def validate_bonus(self, validated_data):
@@ -64,17 +67,10 @@ class WalletSerializer(serializers.ModelSerializer):
         Adding bonus based on currency.
         """
         currency = validated_data.get("currency")
-        bonus = 0.00
-
-        if currency == "GBP":
-            bonus = Decimal(100.00)
-        elif currency in ("USD", "EUR"):
-            bonus = Decimal(3.00)
-
-        balance = validated_data.get("balance")
-        if balance is None:
-            balance = Decimal("0")
-        validated_data["balance"] = balance + bonus
+        bonus = Wallet.BONUSES[
+            currency
+        ]  # Sets appropriate bonus for Wallet currency
+        validated_data["balance"] = bonus
 
 
 class UserSerializer(serializers.ModelSerializer):

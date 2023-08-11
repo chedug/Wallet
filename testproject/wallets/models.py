@@ -48,7 +48,13 @@ class Wallet(models.Model):
     """
 
     objects = models.Manager()
-    max_number_of_wallets = 5
+
+    MAX_NUMBER_OF_WALLETS = 5
+    BONUSES = {
+        "GBP": Decimal("100.00"),
+        "USD": Decimal("3.00"),
+        "EUR": Decimal("3.00"),
+    }
 
     name = models.CharField(
         max_length=8,
@@ -68,6 +74,8 @@ class Wallet(models.Model):
         decimal_places=2,
         default=0.00,
         validators=[MinValueValidator(Decimal("0"))],
+        editable=False,
+        null=False,
     )
     created_on = models.DateTimeField(auto_now_add=True, null=False)
     modified_on = models.DateTimeField(auto_now=True, null=False)
