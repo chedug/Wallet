@@ -7,14 +7,14 @@ from transactions.views import (TransactionDetail, TransactionList,
                                 TransactionWalletList)
 
 urlpatterns = [
-    path("wallets/transactions/", TransactionList.as_view()),
+    path("", TransactionList.as_view()),
     path(
-        "wallets/transactions/<int:id>",
+        "<int:id>",
         TransactionDetail.as_view(),
         name="transaction-detail",
     ),
     path(
-        "wallets/transactions/<str:name>",
+        "<str:name>",
         TransactionWalletList.as_view(),
         name="transaction-wallets",
     ),

@@ -7,9 +7,7 @@ from wallets.views import (UserDetail, UserList, WalletDetail, WalletList,
                            schema_view)
 
 urlpatterns = [
-    path("wallets/", WalletList.as_view()),
-    path("wallets/<str:name>", WalletDetail.as_view(), name="wallet-detail"),
-    path("users/", UserList.as_view()),
-    path("users/<int:pk>/", UserDetail.as_view()),
+    path("", WalletList.as_view()),
+    path("<str:name>", WalletDetail.as_view(), name="wallet-detail"),
     path("/", schema_view),
 ]
