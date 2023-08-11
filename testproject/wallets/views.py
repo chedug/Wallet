@@ -7,7 +7,7 @@ from rest_framework import generics, permissions
 from rest_framework_swagger.views import get_swagger_view
 
 from .models import Wallet
-from .permissions import IsOwnerOrReadOnly
+from testproject.permissions import IsOwnerOrReadOnly
 from .serializers import WalletSerializer
 
 
