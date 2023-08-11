@@ -15,6 +15,11 @@ class WalletList(generics.ListCreateAPIView):
     """
     List Existing Wallets or add new
     """
+    serializer_class = WalletSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+    ]
 
     def get_queryset(self):
         """
@@ -22,12 +27,6 @@ class WalletList(generics.ListCreateAPIView):
         """
         user = self.request.user
         return Wallet.objects.all().filter(user=user.id)
-
-    serializer_class = WalletSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
-    ]
 
     def perform_create(self, serializer):
         """
