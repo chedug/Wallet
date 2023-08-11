@@ -35,7 +35,7 @@ class WalletList(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
+class WalletDetail(generics.RetrieveDestroyAPIView):
     """
     Detail of an individual Wallet.
 
