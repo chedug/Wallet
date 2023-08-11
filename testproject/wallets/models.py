@@ -20,7 +20,12 @@ allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 
 def create_random_name():
-    """Random 8 character long name"""
+    """
+    Return 8-character-long random string.
+
+    Characters are only uppercase English letters or digits 0-9.
+
+    """
     random_name = get_random_string(length=8, allowed_chars=allowed_chars)
     while Wallet.objects.filter(name=random_name).exists():
         random_name = get_random_string(length=8, allowed_chars=allowed_chars)
@@ -29,7 +34,17 @@ def create_random_name():
 
 class Wallet(models.Model):
     """
-    User Wallets
+    Represents a Wallet of a user.
+
+    This model stores wallet entity of users:
+    - id
+    - name - unique random 8 symbols of the Latin alphabet and digits. Example: MO72RTX3
+    - type - 2 possible choices: Visa or Mastercard
+    - currency - 3 possible choices: USD, EUR, GBP
+    - balance - balance rounded up to 2 decimal places. Example: 1.38 - ok, 1.377 - wrong
+    - user - user_id, who created the wallet
+    - created_on - datetime when the wallet was created
+    - modified_on - datetime when the wallet was modified
     """
 
     objects = models.Manager()
@@ -62,16 +77,7 @@ class Wallet(models.Model):
 
     class Meta:
         """
-        Order by creation datetime
+        Metadata and configuration options for Wallet model.
         """
 
         ordering = ["created_on"]
-
-    def create_random_name(self):
-        """Random 8 character long name"""
-        random_name = get_random_string(length=8, allowed_chars=allowed_chars)
-        while Wallet.objects.filter(name=random_name).exists():
-            random_name = get_random_string(
-                length=8, allowed_chars=allowed_chars
-            )
-        return random_name

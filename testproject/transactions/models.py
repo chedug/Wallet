@@ -15,7 +15,15 @@ STATUS_CHOICES = [
 
 class Transaction(models.Model):
     """
-    Transaction between wallets
+    Represents a transaction between two Wallets.
+
+    This model stores transaction entity between two wallets:
+    - sender - wallet id
+    - receiver - wallet id
+    - transfer_amount - the amount of money that the "sender" sends to the "receiver". Example - 5.00
+    - commission - 0.00 if no commission; otherwise, transfer_amount * 0.10
+    - status - PAID if no problems; otherwise, FAILED
+    - timestamp - datetime when the transaction was created
     """
 
     default_transfer_amount = Decimal("0")
@@ -55,7 +63,7 @@ class Transaction(models.Model):
 
     class Meta:
         """
-        Order by datetime
+        Metadata and configuration options for Transaction model.
         """
 
         ordering = ["timestamp"]

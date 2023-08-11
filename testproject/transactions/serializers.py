@@ -14,7 +14,12 @@ from .models import Transaction
 
 class TransactionSerializer(serializers.ModelSerializer):
     """
-    Serializer for Transaction Model
+    Serializer for Transaction Model.
+
+    Methods:
+        create: Create an instance of  Transaction.
+        validate_sender_and_receiver: Check that wallets exist.
+        validate_currency: Check that both wallets are of the same currency.
     """
 
     # owner = serializers.ReadOnlyField(source="user.username")

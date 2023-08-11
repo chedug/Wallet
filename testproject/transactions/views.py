@@ -1,16 +1,11 @@
 """
 Transaction Views
 """
-
-
-from decimal import Decimal
-
 from django.db.models import Q
 from rest_framework import generics, permissions, serializers
 from transactions.logic import commission_calculation, wallet_transaction
 
 from .models import Transaction
-from .permissions import IsOwnerOrReadOnly
 from .serializers import TransactionSerializer
 
 

@@ -12,7 +12,12 @@ from .models import Wallet
 
 class WalletSerializer(serializers.ModelSerializer):
     """
-    Serializer for Wallet Model
+    Serializer for Wallet Model.
+
+    Methods:
+        create: Create an instance of Wallet.
+        validate_max_wallets: Check that user does not have too many wallets.
+        validate_bonus: Set bonus appropriately.
     """
 
     user = serializers.PrimaryKeyRelatedField(
@@ -38,7 +43,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Validate Wallet fields before serializing
+        Validate Wallet fields before serializing.
         """
         self.validate_max_wallets(validated_data)
         self.validate_bonus(validated_data)
@@ -46,7 +51,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
     def validate_max_wallets(self, validated_data):
         """
-        User cannot have more than 5 wallets
+        User cannot have more than 5 wallets.
         """
         user = validated_data["user"]
         if Wallet.objects.filter(user=user).count() >= 5:
@@ -56,7 +61,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
     def validate_bonus(self, validated_data):
         """
-        Adding bonus based on currency
+        Adding bonus based on currency.
         """
         currency = validated_data.get("currency")
         bonus = 0.00
@@ -74,7 +79,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Serializer for default auth.User model
+    Serializer for default auth.User model.
     """
 
     wallets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)

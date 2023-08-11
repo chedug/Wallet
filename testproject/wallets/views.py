@@ -18,9 +18,7 @@ class WalletList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         """
-        This view should return a list of all
-        wallets, where the user is current authenticated
-        user.
+        Only return those wallets, which belong to current user.
         """
         user = self.request.user
         return Wallet.objects.all().filter(user=user.id)
@@ -33,14 +31,16 @@ class WalletList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """
-        Set user field as current user
+        When creating a new wallet, set user field as current user.
         """
         serializer.save(user=self.request.user)
 
 
 class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
     """
-    Detail of individual Wallet
+    Detail of an individual Wallet.
+
+    See info about wallet, update it or destroy the wallet.
     """
 
     queryset = Wallet.objects.all()
