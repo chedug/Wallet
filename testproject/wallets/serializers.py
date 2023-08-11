@@ -72,14 +72,3 @@ class WalletSerializer(serializers.ModelSerializer):
         ]  # Sets appropriate bonus for Wallet currency
         validated_data["balance"] = bonus
 
-
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for default auth.User model.
-    """
-
-    wallets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ["url", "id", "username", "wallets"]

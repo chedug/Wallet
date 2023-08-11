@@ -77,16 +77,3 @@ class TransactionSerializer(serializers.ModelSerializer):
                 "Wallets' currencies do not match."
             )
 
-
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for default auth.User model
-    """
-
-    transactions = serializers.PrimaryKeyRelatedField(
-        many=True, read_only=True
-    )
-
-    class Meta:
-        model = User
-        fields = ["url", "id", "username", "transactions"]

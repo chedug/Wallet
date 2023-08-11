@@ -3,7 +3,7 @@ Urls for Wallet app
 """
 
 from django.urls import path
-from wallets.views import (UserDetail, UserList, WalletDetail, WalletList,
+from wallets.views import (WalletDetail, WalletList,
                            schema_view)
 
 urlpatterns = [

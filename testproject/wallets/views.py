@@ -8,7 +8,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 from .models import Wallet
 from .permissions import IsOwnerOrReadOnly
-from .serializers import UserSerializer, WalletSerializer
+from .serializers import WalletSerializer
 
 
 class WalletList(generics.ListCreateAPIView):
@@ -57,24 +57,6 @@ class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
         wallet = generics.get_object_or_404(Wallet, name=name)
         self.check_object_permissions(self.request, wallet)
         return wallet
-
-
-class UserList(generics.ListAPIView):
-    """
-    User List View
-    """
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserDetail(generics.RetrieveAPIView):
-    """
-    User Detail View
-    """
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 
 schema_view = get_swagger_view(title="Wallet-Transactions API")
