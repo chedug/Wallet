@@ -53,15 +53,19 @@ Configuration:
 ## Usage
 
 How to create wallets:
-**POST** /wallets
+
+**POST** `/wallets`
+```json
 {
  "type": "visa",
  "currency": "GBP"
 }
+```
 
 Get all user's wallets:
-**GET** /wallets
+**GET** `/wallets`
 Example:
+```json
 {
 [
 "id": "1",
@@ -82,18 +86,22 @@ Example:
 "modified_on": ...
 ]
 }
+```
 
-**GET** /wallets/<name> - get wallet where name=<name>. Example - /wallets/VB07N96L
-**DELETE** /wallets/<name> - delete wallet
+**GET** `/wallets/<name>` - get wallet where name=<name>. Example - `/wallets/VB07N96L`
 
-**POST** /wallets/transactions/ - create new transaction. Example:
+**DELETE** `/wallets/<name>` - delete wallet
+
+**POST** `/wallets/transactions/` - create new transaction. Example:
+```json
 {
 "sender": "VB07N96L"
 "receiver": "MJYR096L",
 "transfer_amount": "100.00"
 }
-
-**GET** /wallets/transactions/ - get all transactions for current user. Example:
+```
+**GET** `/wallets/transactions/` - get all transactions for current user. Example:
+```json
 {
 [
 "id": 1,
@@ -106,9 +114,10 @@ Example:
 ],
 ...
 }
+```
 
-**GET** /wallets/transactions/<transaction_id> - get transaction
-**GET** /wallets/transactions/<wallet_name> - get all transactions where wallet was sender or receiver
+**GET** `/wallets/transactions/<transaction_id>` - get transaction
+**GET** `/wallets/transactions/<wallet_name>` - get all transactions where wallet was sender or receiver
 
 ## Authentication and Authorization
 
