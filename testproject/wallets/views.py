@@ -4,10 +4,12 @@ Views for Wallet app
 
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_swagger.views import get_swagger_view
 
+from testproject.permissions import IsOwner, IsOwnerOrReadOnly
+
 from .models import Wallet
-from testproject.permissions import IsOwnerOrReadOnly
 from .serializers import WalletSerializer
 
 
@@ -15,11 +17,10 @@ class WalletList(generics.ListCreateAPIView):
     """
     List Existing Wallets or add new
     """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = WalletSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
-    ]
 
     def get_queryset(self):
         """
@@ -42,12 +43,10 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
     See info about wallet, update it or destroy the wallet.
     """
 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
-    ]
 
     def get_object(self):
         """

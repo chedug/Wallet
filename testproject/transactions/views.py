@@ -3,6 +3,7 @@ Transaction Views
 """
 from django.db.models import Q
 from rest_framework import generics, permissions, serializers
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from transactions.utils import commission_calculation, wallet_transaction
 
 from .models import Transaction
@@ -14,8 +15,9 @@ class TransactionList(generics.ListCreateAPIView):
     List existing transaction or add new one (curr. user)
     """
 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         """
@@ -50,9 +52,10 @@ class TransactionDetail(generics.RetrieveDestroyAPIView):
     Detail of individual Transaction
     """
 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_object(self):
         """
@@ -71,6 +74,8 @@ class TransactionWalletList(generics.ListAPIView):
     All transactions where wallet was sender or receiver
     """
 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
 
     def get_queryset(self):

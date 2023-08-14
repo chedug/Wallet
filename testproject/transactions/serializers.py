@@ -3,9 +3,6 @@ Serializer for Transaction Model
 """
 
 
-from decimal import Decimal
-
-from django.contrib.auth.models import User
 from rest_framework import serializers
 from wallets.models import Wallet
 
@@ -76,4 +73,3 @@ class TransactionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Wallets' currencies do not match."
             )
-

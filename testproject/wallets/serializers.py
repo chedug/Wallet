@@ -71,4 +71,3 @@ class WalletSerializer(serializers.ModelSerializer):
             currency
         ]  # Sets appropriate bonus for Wallet currency
         validated_data["balance"] = bonus
-
