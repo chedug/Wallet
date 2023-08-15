@@ -62,9 +62,8 @@ How to create wallets:
 }
 ```
 
-Get all user's wallets:
+Get all user's wallets: Example:
 **GET** `/wallets`
-Example:
 ```json
 {
 [
@@ -88,14 +87,14 @@ Example:
 }
 ```
 
-**GET** `/wallets/<name>` - get wallet where name=<name>. Example - `/wallets/VB07N96L`
+**GET** `/wallets/<name>` - get wallet where name=`<name>`. Example - `/wallets/VB07N96L`
 
 **DELETE** `/wallets/<name>` - delete wallet
 
 **POST** `/wallets/transactions/` - create new transaction. Example:
 ```json
 {
-"sender": "VB07N96L"
+"sender": "VB07N96L",
 "receiver": "MJYR096L",
 "transfer_amount": "100.00"
 }
