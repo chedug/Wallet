@@ -2,6 +2,7 @@
 Transaction Views
 """
 from django.db.models import Q
+from django.db.models.query import QuerySet
 from rest_framework import generics, permissions, serializers
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from transactions.utils import commission_calculation, wallet_transaction
@@ -19,24 +20,21 @@ class TransactionList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Transaction]:
         """
         Show only transactions where either receiver or sender
         wallet is of user's
         """
         queryset = Transaction.objects.filter(
-            Q(sender__user=self.request.user.id)
-            | Q(receiver__user=self.request.user.id)
+            Q(sender__user=self.request.user.id) | Q(receiver__user=self.request.user.id)
         )
         return queryset
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: TransactionSerializer) -> None:
         """
         Transfer money between two wallets
         """
-        transfer_amount = serializer.validated_data.get(
-            "transfer_amount", Transaction.default_transfer_amount
-        )
+        transfer_amount = serializer.validated_data.get("transfer_amount", Transaction.default_transfer_amount)
         sender = serializer.validated_data["sender"]
         receiver = serializer.validated_data["receiver"]
         commission = commission_calculation(sender, receiver, transfer_amount)
@@ -57,14 +55,12 @@ class TransactionDetail(generics.RetrieveDestroyAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
-    def get_object(self):
+    def get_object(self) -> Transaction:
         """
         Get Transaction or 404 if it doesn't exist
         """
         transaction_id = self.kwargs["id"]
-        transaction = generics.get_object_or_404(
-            Transaction, id=transaction_id
-        )
+        transaction = generics.get_object_or_404(Transaction, id=transaction_id)
         self.check_object_permissions(self.request, transaction)
         return transaction
 
@@ -78,9 +74,7 @@ class TransactionWalletList(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Transaction]:
         wallet_name = self.kwargs["name"]
-        queryset = Transaction.objects.filter(
-            Q(sender__name=wallet_name) | Q(receiver__name=wallet_name)
-        )
+        queryset = Transaction.objects.filter(Q(sender__name=wallet_name) | Q(receiver__name=wallet_name))
         return queryset

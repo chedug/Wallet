@@ -3,6 +3,8 @@ Serializer for Transaction Model
 """
 
 
+from typing import Any, Dict
+
 from rest_framework import serializers
 from wallets.models import Wallet
 
@@ -36,7 +38,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "timestamp",
         ]
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> Transaction:
         """
         Create transaction
         """
@@ -44,7 +46,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         self.validate_currency(validated_data)
         return Transaction.objects.create(**validated_data)
 
-    def validate_sender_and_receiver(self, validated_data):
+    def validate_sender_and_receiver(self, validated_data: Dict[str, Any]) -> None:
         """
         Validate that sender or receiver exists
         """
@@ -54,14 +56,12 @@ class TransactionSerializer(serializers.ModelSerializer):
             Wallet.objects.get(name=sender_name)
             Wallet.objects.get(name=receiver_name)
         except Wallet.DoesNotExist:
-            raise serializers.ValidationError(
-                "Provided sender/receiver does not exist"
-            )
+            raise serializers.ValidationError("Provided sender/receiver does not exist")
 
-    def validate_sender_wallet(self, validated_data):
+    def validate_sender_wallet(self, validated_data: Dict[str, Any]):
         pass
 
-    def validate_currency(self, validated_data):
+    def validate_currency(self, validated_data: Dict[str, Any]) -> None:
         """
         Checks if currencies are the same
         """
@@ -70,6 +70,4 @@ class TransactionSerializer(serializers.ModelSerializer):
         sender_wallet = Wallet.objects.get(name=sender.name)
         receiver_wallet = Wallet.objects.get(name=receiver.name)
         if sender_wallet.currency != receiver_wallet.currency:
-            raise serializers.ValidationError(
-                "Wallets' currencies do not match."
-            )
+            raise serializers.ValidationError("Wallets' currencies do not match.")

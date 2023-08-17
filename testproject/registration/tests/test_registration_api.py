@@ -15,7 +15,7 @@ class RegistrationTests(APITestCase):
     Class for testing Registration
     """
 
-    def test_create_account(self):
+    def test_create_account(self) -> None:
         """
         Ensure we can create a new account object.
         """

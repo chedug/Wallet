@@ -2,14 +2,17 @@
 PyTest testing configurations, custom fixtures
 """
 
+from typing import Any
+
 import pytest
 from django.urls import reverse
+from rest_framework.response import Response
 from rest_framework.test import APIClient
 from wallets.models import CURRENCY_CHOICES
 
 
 @pytest.fixture(scope="function")
-def login_user():
+def login_user() -> APIClient:
     """Login is required for requests"""
     client = APIClient()
     url = reverse("user-registration")
@@ -31,7 +34,7 @@ def login_user():
 
 
 @pytest.fixture(scope="function", params=CURRENCY_CHOICES)
-def create_wallet(request, login_user):
+def create_wallet(request: Any, login_user: APIClient) -> Response:
     """
     Create Wallet instance
     """

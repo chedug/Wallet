@@ -1,6 +1,7 @@
 """
 Views for Wallet app
 """
+from django.db.models.query import QuerySet
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from testproject.permissions import IsOwner
@@ -18,14 +19,14 @@ class WalletList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = WalletSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Wallet]:
         """
         Only return those wallets, which belong to current user.
         """
         user = self.request.user
         return Wallet.objects.all().filter(user=user.id)
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: WalletSerializer) -> None:
         """
         When creating a new wallet, set user field as current user.
         """
@@ -44,7 +45,7 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
-    def get_object(self):
+    def get_object(self) -> Wallet:
         """
         GET Wallet or 404 if it doesn't exist
         """

@@ -2,6 +2,8 @@
 User serializer for registration app
 """
 
+from typing import Any, Dict
+
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
@@ -23,9 +25,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         style={"input_type": "password"},
         validators=[validate_password],
     )
-    password2 = serializers.CharField(
-        write_only=True, style={"input_type": "password"}
-    )
+    password2 = serializers.CharField(write_only=True, style={"input_type": "password"})
     first_name = serializers.CharField()
     last_name = serializers.CharField()
 
@@ -44,17 +44,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "last_name": {"required": True},
         }
 
-    def validate(self, validated_data):
+    def validate(self, validated_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Check that passwords match
         """
         if validated_data["password"] != validated_data["password2"]:
-            raise serializers.ValidationError(
-                {"password": "Password fields didn't match."}
-            )
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
         return validated_data
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> User:
         """
         Register a user
         """

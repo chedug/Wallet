@@ -1,6 +1,8 @@
 """
 Serializers of the Wallets app
 """
+from typing import Any, Dict
+
 from rest_framework import serializers
 
 from .models import Wallet
@@ -35,7 +37,7 @@ class WalletSerializer(serializers.ModelSerializer):
             "modified_on",
         ]
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> Wallet:
         """
         Validate Wallet fields before serializing.
         """
@@ -43,7 +45,7 @@ class WalletSerializer(serializers.ModelSerializer):
         self.validate_bonus(validated_data)
         return Wallet.objects.create(**validated_data)
 
-    def validate_max_wallets(self, validated_data):
+    def validate_max_wallets(self, validated_data: Dict[str, Any]) -> None:
         """
         User cannot have too many wallets.
         """
@@ -51,7 +53,7 @@ class WalletSerializer(serializers.ModelSerializer):
         if Wallet.objects.filter(user=user).count() >= Wallet.MAX_NUMBER_OF_WALLETS:
             raise serializers.ValidationError(f"Users can't create more than {Wallet.MAX_NUMBER_OF_WALLETS} wallets.")
 
-    def validate_bonus(self, validated_data):
+    def validate_bonus(self, validated_data: Dict[str, Any]) -> None:
         """
         Adding bonus based on currency.
         """

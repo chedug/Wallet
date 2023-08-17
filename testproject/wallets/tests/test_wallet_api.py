@@ -8,13 +8,15 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.test import APIClient
 from wallets.models import Wallet
 
 # Create your tests here
 
 
 @pytest.mark.django_db
-def test_create_wallet(login_user):
+def test_create_wallet(login_user: APIClient) -> None:
     """
     Test that wallet is created
     """
@@ -26,7 +28,7 @@ def test_create_wallet(login_user):
 
 
 @pytest.mark.django_db
-def test_max_wallets(login_user):
+def test_max_wallets(login_user: APIClient) -> None:
     """
     Test that user cannot have too many wallets
     """
@@ -37,14 +39,12 @@ def test_max_wallets(login_user):
         # creating first MAX_NUMBER_OF_WALLETS should be ok
         response = client.post(url, data=data, format="json")
         assert response.status_code == status.HTTP_201_CREATED
-    response = client.post(
-        url, data=data, format="json"
-    )  # the last one should not be created
+    response = client.post(url, data=data, format="json")  # the last one should not be created
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
-def test_wallet_bonus(login_user, create_wallet):
+def test_wallet_bonus(login_user: APIClient, create_wallet: Response) -> None:
     """
     Make sure that the appropriate bonus is added
     """
