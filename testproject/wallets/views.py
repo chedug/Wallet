@@ -1,11 +1,8 @@
 """
 Views for Wallet app
 """
-
-from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from testproject.permissions import IsOwner
 
 from .models import Wallet

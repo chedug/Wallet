@@ -1,10 +1,6 @@
 """
 Serializers of the Wallets app
 """
-
-from decimal import Decimal
-
-from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from .models import Wallet
@@ -20,9 +16,7 @@ class WalletSerializer(serializers.ModelSerializer):
         validate_bonus: Set bonus appropriately.
     """
 
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True, source="user.username"
-    )
+    user = serializers.PrimaryKeyRelatedField(read_only=True, source="user.username")
 
     class Meta:
         """
@@ -54,20 +48,13 @@ class WalletSerializer(serializers.ModelSerializer):
         User cannot have too many wallets.
         """
         user = validated_data["user"]
-        if (
-            Wallet.objects.filter(user=user).count()
-            >= Wallet.MAX_NUMBER_OF_WALLETS
-        ):
-            raise serializers.ValidationError(
-                f"Users can't create more than {Wallet.MAX_NUMBER_OF_WALLETS} wallets."
-            )
+        if Wallet.objects.filter(user=user).count() >= Wallet.MAX_NUMBER_OF_WALLETS:
+            raise serializers.ValidationError(f"Users can't create more than {Wallet.MAX_NUMBER_OF_WALLETS} wallets.")
 
     def validate_bonus(self, validated_data):
         """
         Adding bonus based on currency.
         """
         currency = validated_data.get("currency")
-        bonus = Wallet.BONUSES[
-            currency
-        ]  # Sets appropriate bonus for Wallet currency
+        bonus = Wallet.BONUSES[currency]  # Sets appropriate bonus for Wallet currency
         validated_data["balance"] = bonus
