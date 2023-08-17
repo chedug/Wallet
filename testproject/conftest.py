@@ -1,3 +1,7 @@
+"""
+PyTest testing configurations, custom fixtures
+"""
+
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -15,6 +19,7 @@ def login_user():
             "username": "test_user",
             "email": "test_user@at.com",
             "password": "test_user",
+            "password2": "test_user",
             "first_name": "Test",
             "last_name": "User",
         },

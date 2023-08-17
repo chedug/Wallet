@@ -23,7 +23,8 @@ class RegistrationTests(APITestCase):
         data = {
             "username": "kazuyamishima",
             "password": "Qqwerty1!",
-            "email": "nuralyhug@gmail.com",
+            "password2": "Qqwerty1!",
+            "email": "kazuya@gmail.com",
             "first_name": "Kazuya",
             "last_name": "Mishima",
         }
