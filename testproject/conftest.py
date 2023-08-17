@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
+from wallets.models import CURRENCY_CHOICES
 
 
 @pytest.fixture(scope="function")
@@ -24,11 +25,17 @@ def login_user():
     return client
 
 
-@pytest.fixture(scope="function")
-def walletA(client):
+@pytest.fixture(scope="function", params=CURRENCY_CHOICES)
+def create_wallet(request, login_user):
     """
     Create Wallet instance
     """
-    client = APIClient()
+    client = login_user
     url = reverse("wallet-list-create")
-    response = client.post(url, data={}, format="json")
+    response = client.post(
+        url,
+        data={"type": "visa", "currency": f"{request.param[0]}"},
+        format="json",
+    )
+
+    return response

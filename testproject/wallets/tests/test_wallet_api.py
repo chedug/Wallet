@@ -3,8 +3,9 @@ Testing wallets app
 """
 
 
+from decimal import Decimal
+
 import pytest
-from conftest import login_user
 from django.urls import reverse
 from rest_framework import status
 from wallets.models import Wallet
@@ -43,8 +44,12 @@ def test_max_wallets(login_user):
 
 
 @pytest.mark.django_db
-def test_wallet_bonus(login_user):
+def test_wallet_bonus(login_user, create_wallet):
     """
     Make sure that the appropriate bonus is added
     """
-    pass
+    client = login_user
+    bonuses = Wallet.BONUSES
+    wallet = create_wallet
+    wallet_currency = wallet.data["currency"]
+    assert Decimal(wallet.data["balance"]) == bonuses[wallet_currency]
