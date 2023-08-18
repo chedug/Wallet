@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02be2a2f-5b4d-41e6-9515-3ff8e5a7a444" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.ssh/id_rsa" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.ssh/id_rsa.pub" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/task" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Wallet.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Wallet.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="02be2a2f-5b4d-41e6-9515-3ff8e5a7a444" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
