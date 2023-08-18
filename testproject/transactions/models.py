@@ -27,6 +27,7 @@ class Transaction(models.Model):
     """
 
     default_transfer_amount = Decimal("0")
+    COMMISSION_RATE = Decimal("0.1")
 
     objects = models.Manager()
     sender = models.ForeignKey(
@@ -54,12 +55,8 @@ class Transaction(models.Model):
         default=0,
         validators=[MinValueValidator(Decimal("0"))],
     )
-    status = models.CharField(
-        choices=STATUS_CHOICES, max_length=6, default="FAILED", editable=False
-    )
-    timestamp = models.DateTimeField(
-        auto_now_add=True, editable=False, null=False
-    )
+    status = models.CharField(choices=STATUS_CHOICES, max_length=6, default="FAILED", editable=False)
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False)
 
     class Meta:
         """

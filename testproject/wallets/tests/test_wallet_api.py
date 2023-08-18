@@ -9,18 +9,17 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.test import APIClient
 from wallets.models import Wallet
 
 # Create your tests here
 
 
 @pytest.mark.django_db
-def test_create_wallet(login_user: APIClient) -> None:
+def test_create_wallet(login_user) -> None:
     """
     Test that wallet is created
     """
-    client = login_user
+    client = login_user[0]
     url = reverse("wallet-list-create")
     data = {"type": "visa", "currency": "GBP"}
     response = client.post(url, data, format="json")
@@ -28,11 +27,11 @@ def test_create_wallet(login_user: APIClient) -> None:
 
 
 @pytest.mark.django_db
-def test_max_wallets(login_user: APIClient) -> None:
+def test_max_wallets(login_user) -> None:
     """
     Test that user cannot have too many wallets
     """
-    client = login_user
+    client = login_user[0]
     url = reverse("wallet-list-create")
     data = {"type": "visa", "currency": "GBP"}
     for i in range(Wallet.MAX_NUMBER_OF_WALLETS):
@@ -44,11 +43,11 @@ def test_max_wallets(login_user: APIClient) -> None:
 
 
 @pytest.mark.django_db
-def test_wallet_bonus(login_user: APIClient, create_wallet: Response) -> None:
+def test_wallet_bonus(login_user, create_wallet: Response) -> None:
     """
     Make sure that the appropriate bonus is added
     """
-    client = login_user
+    client = login_user[0]
     bonuses = Wallet.BONUSES
     wallet = create_wallet
     wallet_currency = wallet.data["currency"]

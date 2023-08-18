@@ -38,6 +38,7 @@ class TransactionList(generics.ListCreateAPIView):
         sender = serializer.validated_data["sender"]
         receiver = serializer.validated_data["receiver"]
         commission = commission_calculation(sender, receiver, transfer_amount)
+        serializer.validated_data["commission"] = commission
         try:
             wallet_transaction(sender, receiver, transfer_amount, commission)
             serializer.save(status="PAID")
