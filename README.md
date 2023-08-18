@@ -137,7 +137,3 @@ Permissions:
 ## Acknowledgements
 
 I want to express my sincere thanks to @VladKli, who has been the cornerstone of this project. His guidance, careful code reviews, and helpful development lessons have made a real difference.
-
-
-FJIfwqfq
-fqweewqf
