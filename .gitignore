@@ -84,8 +84,11 @@ target/
 *.pyc
 __pycache__/
 local_settings.py
+.idea/
 
 .env
 db.sqlite3
 
-.pre-commit-config.yaml
+/task
+/.venv/
+.ssh/
