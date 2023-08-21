@@ -122,17 +122,43 @@ Get all user's wallets: Example:
 
 The projects implements *JSON Web Token*-based authentication,
 
-Permissions:
+You can obtain authentication token by **POST** `/api-auth/login/` and entering user credentials,
 
-> TODO
+and refresh token by **POST** `/api-auth/login/refresh`, by providing refresh token.
+
+The duration of the JWT access token is 30 minutes, and of the refresh token – 1 day.
+
+#### Permissions:
+
+All endpoints, except the authorization ones, require user to be authenticated by `IsAuthenticated` permission.
+Other custom permissions can be found in `permissions.py` file.
+
+
+| Endpoint                                         | Permissions                                                     |
+|--------------------------------------------------|-----------------------------------------------------------------|
+| **GET**  `/wallets`                              | None                                                            |
+| **POST** `/wallets`                              | None                                                            |
+| **GET** `/wallets/<name>`                        | Must be an owner of the wallet (`IsOwner`)                      |
+| **DELETE** `/wallets/<name>`                     | Must be an owner of the wallet (`IsOwner`)                      |
+| **POST** `/wallets/transactions/`                | Must be an owner of the sender wallet (`IsSenderOwner`)         |
+| **GET** `/wallets/transactions/`                 | None                                                            |
+| **GET** `/wallets/transactions/<transaction_id>` | Must be an owner of the sender wallet (`IsSenderOwner`)         |
+| **GET** `/wallets/transactions/<wallet_name>`    | Either sender or receiver wallet should be of authorized user's | 
 
 ## Testing
 
-> TODO
+To run the tests, you need to install pytest of the version ^7.4.0.
 
-## License
+To install the latest version of pytest run:
 
-> TODO
+```commandline
+pip install pytest
+```
+To execute the tests run the following command in the project directory:
+```commandline
+python manage.py pytest
+```
+
 
 ## Acknowledgements
 

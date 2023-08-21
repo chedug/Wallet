@@ -30,9 +30,8 @@ class TransactionList(generics.ListCreateAPIView):
         Show only transactions where either receiver or sender
         wallet is of user's
         """
-        queryset = Transaction.objects.filter(
-            Q(sender__user=self.request.user.id) | Q(receiver__user=self.request.user.id)
-        )
+        user = self.request.user
+        queryset = Transaction.objects.filter(Q(sender__user=user) | Q(receiver__user=user))
         return queryset
 
     def perform_create(self, serializer: TransactionSerializer) -> None:

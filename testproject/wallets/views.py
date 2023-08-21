@@ -2,8 +2,9 @@
 Views for Wallet app
 """
 from django.db.models.query import QuerySet
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from testproject.permissions import IsOwner
 
@@ -60,3 +61,11 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
             return wallet
         except Wallet.DoesNotExist:
             raise ValidationError("Wallet does not exist.")
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance:
+            self.perform_destroy(instance)
+            return Response({"detail": "Wallet is deleted."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"detail": "Wallet does not exist."}, status=status.HTTP_404_NOT_FOUND)
