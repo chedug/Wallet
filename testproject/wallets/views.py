@@ -42,7 +42,10 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsOwner,
+    ]
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 

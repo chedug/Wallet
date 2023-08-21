@@ -8,7 +8,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from testproject.permissions import IsSenderOwner
+from testproject.permissions import IsSenderOrReceiverOwner, IsSenderOwner
 from transactions.utils import commission_calculation, wallet_transaction
 
 from .models import Transaction
@@ -53,6 +53,9 @@ class TransactionList(generics.ListCreateAPIView):
             serializer.save(status="FAILED")
 
     def create(self, request, *args, **kwargs):
+        """
+        Change status to 201 for FAILED and serialized transactions
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -67,7 +70,7 @@ class TransactionDetail(generics.RetrieveDestroyAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSenderOwner]
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
@@ -87,10 +90,10 @@ class TransactionWalletList(generics.ListAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSenderOrReceiverOwner]
     serializer_class = TransactionSerializer
 
     def get_queryset(self) -> QuerySet[Transaction]:
-        wallet_name = self.kwargs["name"]
-        queryset = Transaction.objects.filter(Q(sender__name=wallet_name) | Q(receiver__name=wallet_name))
+        user = self.request.user
+        queryset = Transaction.objects.filter(Q(sender__user=user) | Q(receiver__user=user))
         return queryset
