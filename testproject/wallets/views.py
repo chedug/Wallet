@@ -3,6 +3,7 @@ Views for Wallet app
 """
 from django.db.models.query import QuerySet
 from rest_framework import generics, permissions
+from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from testproject.permissions import IsOwner
 
@@ -50,6 +51,9 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
         GET Wallet or 404 if it doesn't exist
         """
         name = self.kwargs["name"]
-        wallet = generics.get_object_or_404(Wallet, name=name)
-        self.check_object_permissions(self.request, wallet)
-        return wallet
+        try:
+            wallet = generics.get_object_or_404(Wallet, name=name)
+            self.check_object_permissions(self.request, wallet)
+            return wallet
+        except Wallet.DoesNotExist:
+            raise ValidationError("Wallet does not exist.")

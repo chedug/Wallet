@@ -27,3 +27,10 @@ class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
+
+
+class IsSenderOwner(permissions.BasePermission):
+    message = "You are not the owner of this sender wallet."
+
+    def has_object_permission(self, request, view, obj):
+        return obj.sender.user == request.user
