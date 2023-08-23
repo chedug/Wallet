@@ -73,8 +73,8 @@ Get all user's wallets: Example:
     "type": "Visa",
     "currency": "USD",
     "balance": "1.87",
-    "created_on": ...,
-    "modified_on": ...
+    "created_on": "...",
+    "modified_on": "..."
 },
   {
     "id": "2",
@@ -82,8 +82,8 @@ Get all user's wallets: Example:
     "type": "Visa",
     "currency": "GBP",
     "balance": "1000.50",
-    "created_on": ...,
-    "modified_on": ...
+    "created_on": "...",
+    "modified_on": "..."
   }
 ]
 ```
@@ -101,19 +101,19 @@ Get all user's wallets: Example:
 }
 ```
 **GET** `/wallets/transactions/` - get all transactions for current user. Example:
-```json
-{
+```json lines
 [
-"id": 1,
-"sender": "VB07N96L",
-"receiver": "MJYR096L",
-"transfer_amount": "100.00",
-"commission": "0.00",
-"status": "PAID",
-"timestamp": ...
-],
-...
-}
+  {
+    "id": 1,
+    "sender": "VB07N96L",
+    "receiver": "MJYR096L",
+    "transfer_amount": "100.00",
+    "commission": "0.00",
+    "status": "PAID",
+    "timestamp": "..."
+  },
+  // ... More objects here
+]
 ```
 
 **GET** `/wallets/transactions/<transaction_id>` - get transaction
