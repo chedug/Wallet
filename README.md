@@ -101,7 +101,7 @@ Get all user's wallets: Example:
 }
 ```
 **GET** `/wallets/transactions/` - get all transactions for current user. Example:
-```json lines
+```json5
 [
   {
     "id": 1,
