@@ -55,7 +55,7 @@ Configuration:
 How to create wallets:
 
 **POST** `/wallets`
-```json
+```json5
 {
  "type": "visa",
  "currency": "GBP"
@@ -64,7 +64,7 @@ How to create wallets:
 
 Get all user's wallets: Example:
 **GET** `/wallets`
-```json
+```json5
 
 [
   {
@@ -93,7 +93,7 @@ Get all user's wallets: Example:
 **DELETE** `/wallets/<name>` - delete wallet
 
 **POST** `/wallets/transactions/` - create new transaction. Example:
-```json
+```json5
 {
 "sender": "VB07N96L",
 "receiver": "MJYR096L",
