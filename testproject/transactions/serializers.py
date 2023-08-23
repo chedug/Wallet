@@ -44,6 +44,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         """
         self.validate_sender_and_receiver(validated_data)
         self.validate_currency(validated_data)
+        self.validate_sender_wallet((validated_data))
         return Transaction.objects.create(**validated_data)
 
     def validate_sender_and_receiver(self, validated_data: Dict[str, Any]) -> None:
@@ -59,7 +60,13 @@ class TransactionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Provided sender/receiver does not exist")
 
     def validate_sender_wallet(self, validated_data: Dict[str, Any]):
-        pass
+        """
+        Checks that the sender wallet is
+        """
+        user = self.context["request"].user
+        sender_wallet = validated_data["sender"]
+        if sender_wallet.user != user:
+            raise serializers.ValidationError("You are not authorized to use this sender wallet.")
 
     def validate_currency(self, validated_data: Dict[str, Any]) -> None:
         """

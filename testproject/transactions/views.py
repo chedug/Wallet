@@ -1,10 +1,14 @@
 """
 Transaction Views
 """
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.query import QuerySet
-from rest_framework import generics, permissions, serializers
+from rest_framework import generics, permissions, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from testproject.permissions import IsSenderOrReceiverOwner, IsSenderOwner
 from transactions.utils import commission_calculation, wallet_transaction
 
 from .models import Transaction
@@ -17,7 +21,8 @@ class TransactionList(generics.ListCreateAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSenderOwner]
+
     serializer_class = TransactionSerializer
 
     def get_queryset(self) -> QuerySet[Transaction]:
@@ -25,9 +30,8 @@ class TransactionList(generics.ListCreateAPIView):
         Show only transactions where either receiver or sender
         wallet is of user's
         """
-        queryset = Transaction.objects.filter(
-            Q(sender__user=self.request.user.id) | Q(receiver__user=self.request.user.id)
-        )
+        user = self.request.user
+        queryset = Transaction.objects.filter(Q(sender__user=user) | Q(receiver__user=user))
         return queryset
 
     def perform_create(self, serializer: TransactionSerializer) -> None:
@@ -42,8 +46,21 @@ class TransactionList(generics.ListCreateAPIView):
         try:
             wallet_transaction(sender, receiver, transfer_amount, commission)
             serializer.save(status="PAID")
-        except serializers.ValidationError:
+        except ObjectDoesNotExist:
+            raise ValidationError
+        except ValidationError:
             serializer.save(status="FAILED")
+
+    def create(self, request, *args, **kwargs):
+        """
+        Change status to 201 for FAILED and serialized transactions
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class TransactionDetail(generics.RetrieveDestroyAPIView):
@@ -52,7 +69,7 @@ class TransactionDetail(generics.RetrieveDestroyAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSenderOwner]
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
@@ -72,10 +89,10 @@ class TransactionWalletList(generics.ListAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSenderOrReceiverOwner]
     serializer_class = TransactionSerializer
 
     def get_queryset(self) -> QuerySet[Transaction]:
-        wallet_name = self.kwargs["name"]
-        queryset = Transaction.objects.filter(Q(sender__name=wallet_name) | Q(receiver__name=wallet_name))
+        user = self.request.user
+        queryset = Transaction.objects.filter(Q(sender__user=user) | Q(receiver__user=user))
         return queryset

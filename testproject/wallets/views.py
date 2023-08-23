@@ -2,7 +2,9 @@
 Views for Wallet app
 """
 from django.db.models.query import QuerySet
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from testproject.permissions import IsOwner
 
@@ -41,7 +43,10 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsOwner,
+    ]
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
@@ -50,6 +55,17 @@ class WalletDetail(generics.RetrieveDestroyAPIView):
         GET Wallet or 404 if it doesn't exist
         """
         name = self.kwargs["name"]
-        wallet = generics.get_object_or_404(Wallet, name=name)
-        self.check_object_permissions(self.request, wallet)
-        return wallet
+        try:
+            wallet = generics.get_object_or_404(Wallet, name=name)
+            self.check_object_permissions(self.request, wallet)
+            return wallet
+        except Wallet.DoesNotExist:
+            raise ValidationError("Wallet does not exist.")
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance:
+            self.perform_destroy(instance)
+            return Response({"detail": "Wallet is deleted."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"detail": "Wallet does not exist."}, status=status.HTTP_404_NOT_FOUND)
