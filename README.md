@@ -134,16 +134,16 @@ All endpoints, except the authorization ones, require user to be authenticated b
 Other custom permissions can be found in `permissions.py` file.
 
 
-| Endpoint                                         | Permissions                                                     |
-|--------------------------------------------------|-----------------------------------------------------------------|
-| **GET**  `/wallets`                              | None                                                            |
-| **POST** `/wallets`                              | None                                                            |
-| **GET** `/wallets/<name>`                        | Must be an owner of the wallet (`IsOwner`)                      |
-| **DELETE** `/wallets/<name>`                     | Must be an owner of the wallet (`IsOwner`)                      |
-| **POST** `/wallets/transactions/`                | Must be an owner of the sender wallet (`IsSenderOwner`)         |
-| **GET** `/wallets/transactions/`                 | None                                                            |
-| **GET** `/wallets/transactions/<transaction_id>` | Must be an owner of the sender wallet (`IsSenderOwner`)         |
-| **GET** `/wallets/transactions/<wallet_name>`    | Either sender or receiver wallet should be of authorized user's | 
+| Endpoint                                         | Permissions                                                                         |
+|--------------------------------------------------|-------------------------------------------------------------------------------------|
+| **GET**  `/wallets`                              | `IsAuthenticated`                                                                   |
+| **POST** `/wallets`                              | `IsAuthenticated`                                                                   |
+| **GET** `/wallets/<name>`                        | Must be an owner of the wallet (`IsAuthenticated`, `IsOwner`)                       |
+| **DELETE** `/wallets/<name>`                     | Must be an owner of the wallet (`IsAuthenticated`, `IsOwner`)                       |
+| **POST** `/wallets/transactions/`                | Must be an owner of the sender wallet (`IsAuthenticated`, `IsSenderOwner`)          |
+| **GET** `/wallets/transactions/`                 | Authorized (`IsAuthenticated`)                                                      |
+| **GET** `/wallets/transactions/<transaction_id>` | Must be an owner of the sender wallet (`IsAuthenticated`, `IsSenderOwner`)          |
+| **GET** `/wallets/transactions/<wallet_name>`    | Either sender or receiver wallet should be of authorized user's (`IsAuthenticated`) | 
 
 ## Testing
 
